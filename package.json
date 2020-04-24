@@ -1,0 +1,53 @@
+{
+  "nativescript": {
+    "id": "org.nativescript.EMarketingMobile",
+    "tns-android": {
+      "version": "6.5.0"
+    },
+    "tns-ios": {
+      "version": "6.5.0"
+    }
+  },
+  "scripts": {
+    "preview": "tns preview",
+    "run android": "tns run android"
+  },
+  "description": "NativeScript Application",
+  "license": "SEE LICENSE IN <your-license-filename>",
+  "repository": "https://github.com/Jakubo96/e-marketing",
+  "dependencies": {
+    "@angular/animations": "~8.2.0",
+    "@angular/common": "~8.2.0",
+    "@angular/compiler": "~8.2.0",
+    "@angular/core": "~8.2.0",
+    "@angular/forms": "~8.2.0",
+    "@angular/platform-browser": "~8.2.0",
+    "@angular/platform-browser-dynamic": "~8.2.0",
+    "@angular/router": "~8.2.0",
+    "@nativescript/theme": "~2.3.3",
+    "nativescript-angular": "~8.21.0",
+    "reflect-metadata": "~0.1.12",
+    "rxjs": "^6.4.0",
+    "tns-core-modules": "~6.5.0",
+    "zone.js": "~0.9.1"
+  },
+  "devDependencies": {
+    "@angular/compiler-cli": "~8.2.0",
+    "@angular/cli": "~8.2.0",
+    "@ngtools/webpack": "~8.2.0",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^2.29.0",
+    "@typescript-eslint/experimental-utils": "^2.29.0",
+    "@typescript-eslint/parser": "^2.29.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prefer-arrow": "^1.2.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "nativescript-dev-webpack": "~1.5.1",
+    "prettier": "^2.0.5",
+    "tslint": "^6.1.1",
+    "typescript": "~3.5.3"
+  },
+  "gitHead": "2250137db8c1e0bd0eb543e8e4563cb71480c00d",
+  "readme": "NativeScript Application"
+}
