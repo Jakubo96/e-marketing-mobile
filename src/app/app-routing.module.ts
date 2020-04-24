@@ -3,12 +3,22 @@ import { Routes } from '@angular/router';
 import { NativeScriptRouterModule } from 'nativescript-angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '', redirectTo: '/view-select', pathMatch: 'full' },
   {
-    path: 'home',
+    path: 'view-select',
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     loadChildren: () =>
-      import('app/home/home.module').then((m) => m.HomeModule),
+      import('app/view-select/view-select.module').then(
+        (m) => m.ViewSelectModule
+      ),
+  },
+  {
+    path: 'bluetooth-test',
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    loadChildren: () =>
+      import('app/bluetooth-test/bluetooth-test.module').then(
+        (m) => m.BluetoothTestModule
+      ),
   },
 ];
 

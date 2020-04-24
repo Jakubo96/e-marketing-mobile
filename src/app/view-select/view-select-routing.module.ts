@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes } from '@angular/router';
 import { NativeScriptRouterModule } from 'nativescript-angular/router';
-import { HomeComponent } from 'app/home/home.component';
+import { ViewSelectComponent } from 'app/view-select/view-select.component';
 
-const routes: Routes = [{ path: '', component: HomeComponent }];
+const routes: Routes = [{ path: '', component: ViewSelectComponent }];
 
 @NgModule({
   imports: [NativeScriptRouterModule.forChild(routes)],
   exports: [NativeScriptRouterModule],
 })
-export class HomeRoutingModule {}
+export class ViewSelectRoutingModule {}
