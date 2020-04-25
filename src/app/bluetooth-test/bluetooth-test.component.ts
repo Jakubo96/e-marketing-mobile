@@ -2,11 +2,13 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  NgZone,
   OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { isAndroid, Page } from 'tns-core-modules/ui/page';
+import { Page } from 'tns-core-modules/ui/page';
+import { isAndroid } from 'tns-core-modules/platform';
 import { Bluetooth } from 'nativescript-bluetooth';
 import * as applicationModule from 'tns-core-modules/application';
 import { requestPermission } from 'nativescript-permissions';
@@ -17,7 +19,6 @@ import IntentFilter = android.content.IntentFilter;
 import Intent = android.content.Intent;
 import BroadcastReceiver = android.content.BroadcastReceiver;
 import Context = android.content.Context;
-import Parcelable = android.os.Parcelable;
 
 @AutoUnsubscribe()
 @Component({
@@ -29,12 +30,13 @@ export class BluetoothTestComponent implements OnInit, OnDestroy {
   @ViewChild('listView', { static: false }) public listView: ElementRef;
 
   private readonly bluetooth = new Bluetooth();
+  private readonly btAdapter = BluetoothAdapter.getDefaultAdapter();
   private readonly receiver = new CustomReceiver();
   public readonly detectedDevices: string[] = [];
 
   public scanning = false;
 
-  constructor(private readonly page: Page) {
+  constructor(private readonly page: Page, private readonly zone: NgZone) {
     this.page.actionBarHidden = true;
   }
 
@@ -43,9 +45,26 @@ export class BluetoothTestComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
+    if (this.scanning) {
+      this.btAdapter.cancelDiscovery();
+    }
     applicationModule.android.foregroundActivity.unregisterReceiver(
       this.receiver
     );
+  }
+
+  public startScan(): void {
+    if (!this.scanning) {
+      this.detectedDevices.length = 0;
+      this.listView.nativeElement.refresh();
+      this.btAdapter.startDiscovery();
+    }
+  }
+
+  public stopScan(): void {
+    if (this.scanning) {
+      this.btAdapter.cancelDiscovery();
+    }
   }
 
   private async scanBluetooth(): Promise<void> {
@@ -77,8 +96,7 @@ export class BluetoothTestComponent implements OnInit, OnDestroy {
   private discoverDevices(): void {
     this.setupReceivers();
 
-    const btAdapter = BluetoothAdapter.getDefaultAdapter();
-    btAdapter.startDiscovery();
+    this.btAdapter.startDiscovery();
   }
 
   private setupReceivers(): void {
@@ -104,26 +122,30 @@ export class BluetoothTestComponent implements OnInit, OnDestroy {
   }
 
   private handleReceivers(): void {
-    this.receiver.deviceDetected.subscribe((device: Parcelable) => {
-      // eslint-disable-next-line no-console
-      console.log(`Detected: ${device}`);
+    this.receiver.deviceDetected.subscribe((device: string) => {
       this.detectedDevices.push(device);
       this.listView.nativeElement.refresh();
     });
-    this.receiver.discoveryStarted.subscribe(() => (this.scanning = true));
-    this.receiver.discoveryFinished.subscribe(() => (this.scanning = false));
+    this.receiver.discoveryStarted.subscribe(() => {
+      this.zone.run(() => (this.scanning = true));
+    });
+    this.receiver.discoveryFinished.subscribe(() => {
+      this.zone.run(() => (this.scanning = false));
+    });
   }
 }
 
 class CustomReceiver extends BroadcastReceiver {
-  public deviceDetected = new EventEmitter<Parcelable>();
+  public deviceDetected = new EventEmitter<string>();
   public discoveryStarted = new EventEmitter();
   public discoveryFinished = new EventEmitter();
 
   public onReceive(context: Context, intent: Intent): void {
     switch (intent.getAction()) {
       case BluetoothDevice.ACTION_FOUND:
-        const device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+        const device = intent
+          .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+          .toString();
         this.deviceDetected.emit(device);
         break;
       case BluetoothAdapter.ACTION_DISCOVERY_STARTED:

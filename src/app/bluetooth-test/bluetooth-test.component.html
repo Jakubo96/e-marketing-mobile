@@ -1,8 +1,34 @@
-<StackLayout>
-  <ActivityIndicator [busy]="scanning"></ActivityIndicator>
-  <ListView #listView [items]="detectedDevices" class="text-center">
-    <ng-template let-device="item">
-      <Label [text]="device"></Label>
-    </ng-template>
+<GridLayout rows="*, 5*, *" columns="*" class="p-y-30">
+  <StackLayout row="0" col="0" height="150" verticalAlignment="center">
+    <ActivityIndicator
+      height="75"
+      width="75"
+      [busy]="scanning"
+    ></ActivityIndicator>
+  </StackLayout>
+
+  <ListView
+    row="1"
+    col="0"
+    #listView
+    [items]="detectedDevices"
+    class="list-group text-center h2"
+  >
   </ListView>
-</StackLayout>
+
+  <StackLayout row="2" col="0">
+    <Button
+      class="-primary start-button -rounded-sm"
+      text="Start scanning"
+      (tap)="startScan()"
+      [isEnabled]="!scanning"
+    ></Button>
+
+    <Button
+      class="-primary stop-button -rounded-sm"
+      text="Stop scanning"
+      (tap)="stopScan()"
+      [isEnabled]="scanning"
+    ></Button>
+  </StackLayout>
+</GridLayout>
