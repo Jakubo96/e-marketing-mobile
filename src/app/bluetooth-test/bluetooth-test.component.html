@@ -1,3 +1,8 @@
 <StackLayout>
   <ActivityIndicator [busy]="scanning"></ActivityIndicator>
+  <ListView #listView [items]="detectedDevices" class="text-center">
+    <ng-template let-device="item">
+      <Label [text]="device"></Label>
+    </ng-template>
+  </ListView>
 </StackLayout>

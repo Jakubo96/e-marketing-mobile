@@ -1,8 +1,16 @@
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { isAndroid, Page } from 'tns-core-modules/ui/page';
 import { Bluetooth } from 'nativescript-bluetooth';
 import * as applicationModule from 'tns-core-modules/application';
 import { requestPermission } from 'nativescript-permissions';
+import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import BluetoothDevice = android.bluetooth.BluetoothDevice;
 import BluetoothAdapter = android.bluetooth.BluetoothAdapter;
 import IntentFilter = android.content.IntentFilter;
@@ -10,7 +18,6 @@ import Intent = android.content.Intent;
 import BroadcastReceiver = android.content.BroadcastReceiver;
 import Context = android.content.Context;
 import Parcelable = android.os.Parcelable;
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 
 @AutoUnsubscribe()
 @Component({
@@ -19,8 +26,11 @@ import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
   styleUrls: ['./bluetooth-test.component.scss'],
 })
 export class BluetoothTestComponent implements OnInit, OnDestroy {
+  @ViewChild('listView', { static: false }) public listView: ElementRef;
+
   private readonly bluetooth = new Bluetooth();
   private readonly receiver = new CustomReceiver();
+  public readonly detectedDevices: string[] = [];
 
   public scanning = false;
 
@@ -94,10 +104,12 @@ export class BluetoothTestComponent implements OnInit, OnDestroy {
   }
 
   private handleReceivers(): void {
-    this.receiver.deviceDetected.subscribe((device) =>
+    this.receiver.deviceDetected.subscribe((device: Parcelable) => {
       // eslint-disable-next-line no-console
-      console.log(`Detected: ${device}`)
-    );
+      console.log(`Detected: ${device}`);
+      this.detectedDevices.push(device);
+      this.listView.nativeElement.refresh();
+    });
     this.receiver.discoveryStarted.subscribe(() => (this.scanning = true));
     this.receiver.discoveryFinished.subscribe(() => (this.scanning = false));
   }
