@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes } from '@angular/router';
 import { NativeScriptRouterModule } from 'nativescript-angular/router';
-import { BluetoothTestComponent } from 'app/bluetooth-test/bluetooth-test.component';
+import { BluetoothScanComponent } from 'app/bluetooth-scan/bluetooth-scan.component';
 
-const routes: Routes = [{ path: '', component: BluetoothTestComponent }];
+const routes: Routes = [{ path: '', component: BluetoothScanComponent }];
 
 @NgModule({
   imports: [NativeScriptRouterModule.forChild(routes)],
   exports: [NativeScriptRouterModule],
 })
-export class BluetoothTestRoutingModule {}
+export class BluetoothScanRoutingModule {}

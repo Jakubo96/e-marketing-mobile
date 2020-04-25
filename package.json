@@ -14,7 +14,7 @@
   },
   "description": "NativeScript Application",
   "license": "SEE LICENSE IN <your-license-filename>",
-  "repository": "https://github.com/Jakubo96/e-marketing",
+  "repository": "https://github.com/Jakubo96/e-marketing-mobile",
   "dependencies": {
     "@angular/animations": "~8.2.0",
     "@angular/common": "~8.2.0",

@@ -16,19 +16,12 @@
   >
   </ListView>
 
-  <StackLayout row="2" col="0">
-    <Button
-      class="-primary start-button -rounded-sm"
-      text="Start scanning"
-      (tap)="startScan()"
-      [isEnabled]="!scanning"
-    ></Button>
-
-    <Button
-      class="-primary stop-button -rounded-sm"
-      text="Stop scanning"
-      (tap)="stopScan()"
-      [isEnabled]="scanning"
-    ></Button>
-  </StackLayout>
+  <Button
+    row="2"
+    col="0"
+    class="-primary start-button -rounded-sm"
+    text="Restart scan"
+    (tap)="restartScan()"
+    [isEnabled]="!scanning"
+  ></Button>
 </GridLayout>

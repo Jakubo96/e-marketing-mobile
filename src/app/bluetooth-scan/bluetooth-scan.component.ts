@@ -22,11 +22,11 @@ import Context = android.content.Context;
 
 @AutoUnsubscribe()
 @Component({
-  selector: 'ns-bluetooth-test',
-  templateUrl: './bluetooth-test.component.html',
-  styleUrls: ['./bluetooth-test.component.scss'],
+  selector: 'ns-bluetooth-scan',
+  templateUrl: './bluetooth-scan.component.html',
+  styleUrls: ['./bluetooth-scan.component.scss'],
 })
-export class BluetoothTestComponent implements OnInit, OnDestroy {
+export class BluetoothScanComponent implements OnInit, OnDestroy {
   @ViewChild('listView', { static: false }) public listView: ElementRef;
 
   private readonly bluetooth = new Bluetooth();
@@ -53,17 +53,11 @@ export class BluetoothTestComponent implements OnInit, OnDestroy {
     );
   }
 
-  public startScan(): void {
+  public restartScan(): void {
     if (!this.scanning) {
       this.detectedDevices.length = 0;
       this.listView.nativeElement.refresh();
       this.btAdapter.startDiscovery();
-    }
-  }
-
-  public stopScan(): void {
-    if (this.scanning) {
-      this.btAdapter.cancelDiscovery();
     }
   }
 

@@ -13,11 +13,11 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'bluetooth-test',
+    path: 'bluetooth-scan',
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     loadChildren: () =>
-      import('app/bluetooth-test/bluetooth-test.module').then(
-        (m) => m.BluetoothTestModule
+      import('app/bluetooth-scan/bluetooth-scan.module').then(
+        (m) => m.BluetoothScanModule
       ),
   },
 ];
