@@ -27,6 +27,8 @@
     "@nativescript/theme": "^2.3.3",
     "nativescript-angular": "~8.21.0",
     "nativescript-bluetooth": "^3.0.0-beta.10",
+    "nativescript-permissions": "^1.3.8",
+    "ngx-auto-unsubscribe": "^3.0.1",
     "reflect-metadata": "~0.1.12",
     "rxjs": "^6.4.0",
     "tns-core-modules": "~6.5.0",
@@ -47,6 +49,7 @@
     "nativescript-dev-webpack": "~1.5.1",
     "node-sass": "^4.14.0",
     "prettier": "^2.0.5",
+    "tns-platform-declarations": "^6.5.1",
     "tslint": "^6.1.1",
     "typescript": "~3.5.3"
   },
