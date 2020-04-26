@@ -138,10 +138,10 @@ class CustomReceiver extends BroadcastReceiver {
   public onReceive(context: Context, intent: Intent): void {
     switch (intent.getAction()) {
       case BluetoothDevice.ACTION_FOUND:
-        const device = intent
-          .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-          .toString();
-        this.deviceDetected.emit(device);
+        const deviceAddress = (intent.getParcelableExtra(
+          BluetoothDevice.EXTRA_DEVICE
+        ) as BluetoothDevice).getAddress();
+        this.deviceDetected.emit(deviceAddress);
         break;
       case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
         this.discoveryStarted.emit();
