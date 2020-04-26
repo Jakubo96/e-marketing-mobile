@@ -7,7 +7,14 @@
     ></ActivityIndicator>
   </StackLayout>
 
-  <RadListView row="1" col="0" [items]="detectedDevices">
+  <RadListView
+    row="1"
+    col="0"
+    [items]="detectedDevices"
+    [selectionBehavior]="scanning ? 'None' : 'Press'"
+    [multipleSelection]="false"
+    (itemSelected)="onItemSelected($event)"
+  >
     <ng-template tkListItemTemplate let-device="item" let-i="index">
       <FlexboxLayout
         justifyContent="space-around"

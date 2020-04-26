@@ -20,6 +20,14 @@ const routes: Routes = [
         (m) => m.BluetoothScanModule
       ),
   },
+  {
+    path: 'time-select',
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    loadChildren: () =>
+      import('app/time-select/time-select.module').then(
+        (m) => m.TimeSelectModule
+      ),
+  },
 ];
 
 @NgModule({

@@ -11,14 +11,19 @@ import { Bluetooth } from 'nativescript-bluetooth';
 import * as applicationModule from 'tns-core-modules/application';
 import { requestPermission } from 'nativescript-permissions';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
+import { MobileDevice } from 'app/bluetooth-scan/mobile-device';
+import { HttpWrapperService } from 'app/http-wrapper.service';
+import { mergeMapTo, share } from 'rxjs/internal/operators';
+import { defer, Observable } from 'rxjs';
+import { SnackBar } from '@nstudio/nativescript-snackbar';
+import { RouterExtensions } from 'nativescript-angular/router';
+import { ListViewEventData } from 'nativescript-ui-listview';
 import BluetoothDevice = android.bluetooth.BluetoothDevice;
 import BluetoothAdapter = android.bluetooth.BluetoothAdapter;
 import IntentFilter = android.content.IntentFilter;
 import Intent = android.content.Intent;
 import BroadcastReceiver = android.content.BroadcastReceiver;
 import Context = android.content.Context;
-import { MobileDevice } from 'app/bluetooth-scan/mobile-device';
-import { HttpWrapperService } from 'app/http-wrapper.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -30,6 +35,7 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
   private readonly bluetooth = new Bluetooth();
   private readonly btAdapter = BluetoothAdapter.getDefaultAdapter();
   private readonly receiver = new CustomReceiver();
+  private readonly snackbar = new SnackBar();
   public detectedDevices: MobileDevice[] = [];
 
   public scanning = false;
@@ -37,7 +43,8 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
   constructor(
     page: Page,
     private readonly zone: NgZone,
-    private readonly httpWrapper: HttpWrapperService
+    private readonly httpWrapper: HttpWrapperService,
+    private readonly router: RouterExtensions
   ) {
     page.actionBarHidden = true;
   }
@@ -62,6 +69,23 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
     }
   }
 
+  public onItemSelected(event: ListViewEventData): void {
+    const listView = event.object;
+    const selectedDevice = listView.getSelectedItems()[0] as MobileDevice;
+
+    if (!selectedDevice.name) {
+      this.snackbar.simple('This device is not logged in', '#000', '#d3d3d3');
+      return;
+    }
+
+    this.router.navigate(['/time-select'], {
+      queryParams: {
+        username: selectedDevice.name,
+        mac: selectedDevice.address,
+      },
+    });
+  }
+
   private async scanBluetooth(): Promise<void> {
     const enabled = await this.providePermissions();
 
@@ -70,8 +94,7 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
         this.discoverDevices();
       }
     } else {
-      // eslint-disable-next-line no-console
-      console.log('Bluetooth not enabled');
+      this.snackbar.simple('Bluetooth not enabled', '#000', '#d3d3d3');
     }
   }
 
@@ -81,8 +104,11 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
       await requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
       permissionGranted = true;
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log('ACCESS_FINE_LOCATION permission not granted');
+      this.snackbar.simple(
+        'ACCESS_FINE_LOCATION permission not granted',
+        '#000',
+        '#d3d3d3'
+      );
       permissionGranted = false;
     }
     return (await this.bluetooth.enable()) && permissionGranted;
@@ -126,9 +152,20 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
     this.receiver.discoveryStarted.subscribe(() => {
       this.zone.run(() => (this.scanning = true));
     });
-    this.receiver.discoveryFinished.subscribe(() => {
+
+    const discoveryFinished = this.receiver.discoveryFinished.pipe(share());
+    discoveryFinished.subscribe(() => {
       this.zone.run(() => (this.scanning = false));
     });
+    discoveryFinished
+      .pipe(mergeMapTo(this.overwriteDevices()))
+      .subscribe(() => {
+        this.snackbar.simple(
+          'List of detected devices sent to the server',
+          '#000',
+          '#d3d3d3'
+        );
+      });
   }
 
   private assignDeviceName(address: string, index: number): void {
@@ -140,6 +177,17 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  private overwriteDevices(): Observable<void> {
+    return defer(() =>
+      this.httpWrapper.overwriteDetectedDevices({
+        detectedDevices: this.detectedDevices.map((device) => ({
+          mac: device.address,
+          username: device.name,
+        })),
+      })
+    );
   }
 }
 
