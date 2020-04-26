@@ -18,6 +18,7 @@ import Intent = android.content.Intent;
 import BroadcastReceiver = android.content.BroadcastReceiver;
 import Context = android.content.Context;
 import { MobileDevice } from 'app/bluetooth-scan/mobile-device';
+import { HttpWrapperService } from 'app/http-wrapper.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -33,7 +34,11 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
 
   public scanning = false;
 
-  constructor(page: Page, private readonly zone: NgZone) {
+  constructor(
+    page: Page,
+    private readonly zone: NgZone,
+    private readonly httpWrapper: HttpWrapperService
+  ) {
     page.actionBarHidden = true;
   }
 
@@ -112,20 +117,28 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
   }
 
   private handleReceivers(): void {
-    this.receiver.deviceDetected.subscribe((device: string) =>
+    this.receiver.deviceDetected.subscribe((address: string) => {
       this.zone.run(
-        () =>
-          (this.detectedDevices = [
-            ...this.detectedDevices,
-            { address: device },
-          ])
-      )
-    );
+        () => (this.detectedDevices = [...this.detectedDevices, { address }])
+      );
+      this.assignDeviceName(address, this.detectedDevices.length - 1);
+    });
     this.receiver.discoveryStarted.subscribe(() => {
       this.zone.run(() => (this.scanning = true));
     });
     this.receiver.discoveryFinished.subscribe(() => {
       this.zone.run(() => (this.scanning = false));
+    });
+  }
+
+  private assignDeviceName(address: string, index: number): void {
+    this.httpWrapper.findDevice(address).subscribe((device) => {
+      if (device) {
+        this.zone.run(() => {
+          this.detectedDevices[index].name = device.username;
+          this.detectedDevices = [...this.detectedDevices];
+        });
+      }
     });
   }
 }
