@@ -28,6 +28,7 @@
     "nativescript-angular": "~8.21.0",
     "nativescript-bluetooth": "^3.0.0-beta.10",
     "nativescript-permissions": "^1.3.8",
+    "nativescript-ui-listview": "^8.1.2",
     "ngx-auto-unsubscribe": "^3.0.1",
     "reflect-metadata": "~0.1.12",
     "rxjs": "^6.4.0",

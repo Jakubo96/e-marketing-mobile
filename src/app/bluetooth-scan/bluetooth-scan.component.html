@@ -7,19 +7,29 @@
     ></ActivityIndicator>
   </StackLayout>
 
-  <ListView
-    row="1"
-    col="0"
-    #listView
-    [items]="detectedDevices"
-    class="list-group text-center h2"
-  >
-  </ListView>
+  <RadListView row="1" col="0" [items]="detectedDevices">
+    <ng-template tkListItemTemplate let-device="item" let-i="index">
+      <FlexboxLayout
+        justifyContent="space-around"
+        class="text-center"
+        [backgroundColor]="i % 2 === 1 ? '#d3d3d3' : '#add8e6'"
+      >
+        <StackLayout>
+          <Label class="font-weight-bold h2" text="Name"></Label>
+          <Label class="h3" [text]="device.name || 'Unknown'"></Label>
+        </StackLayout>
+        <StackLayout>
+          <Label class="font-weight-bold h2" text="Address"></Label>
+          <Label class="h3" [text]="device.address"></Label>
+        </StackLayout>
+      </FlexboxLayout>
+    </ng-template>
+  </RadListView>
 
   <Button
     row="2"
     col="0"
-    class="-primary start-button -rounded-sm"
+    class="-primary restart-button -rounded-sm"
     text="Restart scan"
     (tap)="restartScan()"
     [isEnabled]="!scanning"

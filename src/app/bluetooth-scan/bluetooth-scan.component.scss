@@ -1,11 +1,4 @@
-Button {
+.restart-button {
   font-size: 22sp;
-
-  &.start-button {
-    background-color: #008000;
-  }
-
-  &.stop-button {
-    background-color: #ff0000;
-  }
+  background-color: #008000;
 }

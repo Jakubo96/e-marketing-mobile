@@ -1,11 +1,9 @@
 import {
   Component,
-  ElementRef,
   EventEmitter,
   NgZone,
   OnDestroy,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { Page } from 'tns-core-modules/ui/page';
 import { isAndroid } from 'tns-core-modules/platform';
@@ -19,6 +17,7 @@ import IntentFilter = android.content.IntentFilter;
 import Intent = android.content.Intent;
 import BroadcastReceiver = android.content.BroadcastReceiver;
 import Context = android.content.Context;
+import { MobileDevice } from 'app/bluetooth-scan/mobile-device';
 
 @AutoUnsubscribe()
 @Component({
@@ -27,12 +26,10 @@ import Context = android.content.Context;
   styleUrls: ['./bluetooth-scan.component.scss'],
 })
 export class BluetoothScanComponent implements OnInit, OnDestroy {
-  @ViewChild('listView', { static: false }) public listView: ElementRef;
-
   private readonly bluetooth = new Bluetooth();
   private readonly btAdapter = BluetoothAdapter.getDefaultAdapter();
   private readonly receiver = new CustomReceiver();
-  public readonly detectedDevices: string[] = [];
+  public detectedDevices: MobileDevice[] = [];
 
   public scanning = false;
 
@@ -55,8 +52,7 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
 
   public restartScan(): void {
     if (!this.scanning) {
-      this.detectedDevices.length = 0;
-      this.listView.nativeElement.refresh();
+      this.detectedDevices = [];
       this.btAdapter.startDiscovery();
     }
   }
@@ -116,10 +112,15 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
   }
 
   private handleReceivers(): void {
-    this.receiver.deviceDetected.subscribe((device: string) => {
-      this.detectedDevices.push(device);
-      this.listView.nativeElement.refresh();
-    });
+    this.receiver.deviceDetected.subscribe((device: string) =>
+      this.zone.run(
+        () =>
+          (this.detectedDevices = [
+            ...this.detectedDevices,
+            { address: device },
+          ])
+      )
+    );
     this.receiver.discoveryStarted.subscribe(() => {
       this.zone.run(() => (this.scanning = true));
     });
