@@ -33,8 +33,8 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
 
   public scanning = false;
 
-  constructor(private readonly page: Page, private readonly zone: NgZone) {
-    this.page.actionBarHidden = true;
+  constructor(page: Page, private readonly zone: NgZone) {
+    page.actionBarHidden = true;
   }
 
   public ngOnInit(): void {

@@ -7,7 +7,7 @@ import { Page } from 'tns-core-modules/ui/page/page';
   styleUrls: ['./view-select.component.scss'],
 })
 export class ViewSelectComponent {
-  constructor(private readonly page: Page) {
-    this.page.actionBarHidden = true;
+  constructor(page: Page) {
+    page.actionBarHidden = true;
   }
 }
