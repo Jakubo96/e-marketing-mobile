@@ -162,10 +162,12 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
       .pipe(flatMap((mac) => this.httpWrapper.findDevice(mac)))
       .subscribe((device) => {
         if (device) {
-          this.zone.run(
-            () =>
-              (this.detectedDevices[this.detectedDevices.length - 1] = device)
-          );
+          this.zone.run(() => {
+            const deviceToUpdateIndex = this.detectedDevices.findIndex(
+              (detectedDevice) => detectedDevice.mac === device.mac
+            );
+            this.detectedDevices[deviceToUpdateIndex] = device;
+          });
         }
       });
   }

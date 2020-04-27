@@ -1,5 +1,9 @@
 <FlexboxLayout class="main-container p-y-30">
-  <Label class="h2" [text]="'Select notification time for ' + username"></Label>
+  <Label
+    class="h2"
+    [textWrap]="true"
+    [text]="'Select notification time for ' + username"
+  ></Label>
 
   <TimePicker [formControl]="timeControl"></TimePicker>
 
