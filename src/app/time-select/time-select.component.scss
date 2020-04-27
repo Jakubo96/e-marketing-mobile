@@ -1,10 +1,23 @@
-StackLayout {
-  vertical-align: center;
-  text-align: center;
+.main-container {
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 
-  .buttons {
-    background-color: red;
-    flex-direction: row;
+  .buttons-container {
+    align-items: center;
     justify-content: space-around;
+
+    Button {
+      font-size: 22sp;
+      height: 60;
+
+      &.back-button {
+        background-color: #ff0000;
+      }
+
+      &.confirm-button {
+        background-color: #008000;
+      }
+    }
   }
 }

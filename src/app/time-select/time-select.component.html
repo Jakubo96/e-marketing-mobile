@@ -1,17 +1,13 @@
-<GridLayout rows="2*, 6*, *" columns="*" class="p-y-30">
-  <FlexboxLayout row="0" col="0" alignItems="center">
-    <Label
-      class="h2"
-      [text]="'Select notification time for ' + username"
-    ></Label>
-  </FlexboxLayout>
+<FlexboxLayout class="main-container p-y-30">
+  <Label class="h2" [text]="'Select notification time for ' + username"></Label>
 
-  <FlexboxLayout row="1" col="0" alignItems="center" justifyContent="center">
-    <TimePicker [formControl]="timeControl"></TimePicker>
-  </FlexboxLayout>
+  <TimePicker [formControl]="timeControl"></TimePicker>
 
-  <FlexboxLayout class="buttons" row="2" col="1">
-    <Button class="-primary -rounded-sm h2" text="Go back"></Button>
-    <Button class="-primary -rounded-sm h2" text="Confirm"></Button>
+  <FlexboxLayout class="buttons-container">
+    <Button class="back-button -primary -rounded-sm h2" text="Go back"></Button>
+    <Button
+      class="confirm-button -primary -rounded-sm h2"
+      text="Confirm"
+    ></Button>
   </FlexboxLayout>
-</GridLayout>
+</FlexboxLayout>

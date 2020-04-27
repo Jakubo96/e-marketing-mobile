@@ -11,7 +11,7 @@ import { FormControl } from '@angular/forms';
 })
 export class TimeSelectComponent implements OnInit {
   public username: string;
-  private mac: string;
+  private pushToken: string;
 
   public readonly timeControl = new FormControl(new Date());
 
@@ -29,6 +29,6 @@ export class TimeSelectComponent implements OnInit {
 
   private retrieveUsernameAndMac(): void {
     this.username = this.route.snapshot.queryParams.username;
-    this.mac = this.route.snapshot.queryParams.mac;
+    this.pushToken = this.route.snapshot.queryParams.pushToken;
   }
 }

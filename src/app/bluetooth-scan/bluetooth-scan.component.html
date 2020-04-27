@@ -1,8 +1,7 @@
 <GridLayout rows="*, 5*, *" columns="*" class="p-y-30">
-  <StackLayout row="0" col="0" height="150" verticalAlignment="center">
+  <StackLayout row="0" col="0" class="activity-container">
     <ActivityIndicator
-      height="75"
-      width="75"
+      class="activity-indicator"
       [busy]="scanning"
     ></ActivityIndicator>
   </StackLayout>
@@ -17,8 +16,7 @@
   >
     <ng-template tkListItemTemplate let-device="item" let-i="index">
       <FlexboxLayout
-        justifyContent="space-around"
-        class="text-center"
+        class="text-center card-container"
         [backgroundColor]="i % 2 === 1 ? '#d3d3d3' : '#add8e6'"
       >
         <StackLayout>
