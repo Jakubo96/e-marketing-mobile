@@ -139,6 +139,7 @@ module.exports = {
     }],
     "@typescript-eslint/prefer-readonly": ["warn"],
     "@typescript-eslint/explicit-module-boundary-types": ["warn"],
-    "@typescript-eslint/unbound-method": ["off"]
+    "@typescript-eslint/unbound-method": ["off"],
+    "@typescript-eslint/no-misused-promises": ["off"]
   }
 };

@@ -4,8 +4,13 @@
   <TimePicker [formControl]="timeControl"></TimePicker>
 
   <FlexboxLayout class="buttons-container">
-    <Button class="back-button -primary -rounded-sm h2" text="Go back"></Button>
     <Button
+      (tap)="goBack()"
+      class="back-button -primary -rounded-sm h2"
+      text="Go back"
+    ></Button>
+    <Button
+      (tap)="changeNotificationTime()"
       class="confirm-button -primary -rounded-sm h2"
       text="Confirm"
     ></Button>

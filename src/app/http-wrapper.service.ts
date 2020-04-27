@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DeviceIdentifier } from 'app/bluetooth-scan/device-identifier';
 import { DetectedDevices } from 'app/bluetooth-scan/detected-devices';
+import { NotificationTime } from 'app/time-select/notification-time';
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +31,17 @@ export class HttpWrapperService {
     return this.http.post<void>(
       `${this.SERVER_PREFIX}detected/overwrite`,
       detectedDevices,
+      this.options
+    );
+  }
+
+  public changeNotificationTime(
+    pushToken: string,
+    notificationTime: NotificationTime
+  ): Observable<void> {
+    return this.http.put<void>(
+      `${this.SERVER_PREFIX}notification/${pushToken}`,
+      notificationTime,
       this.options
     );
   }
