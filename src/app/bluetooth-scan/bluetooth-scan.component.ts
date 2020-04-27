@@ -11,7 +11,6 @@ import { Bluetooth } from 'nativescript-bluetooth';
 import * as applicationModule from 'tns-core-modules/application';
 import { requestPermission } from 'nativescript-permissions';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
-import { MobileDevice } from 'app/bluetooth-scan/mobile-device';
 import { HttpWrapperService } from 'app/http-wrapper.service';
 import { mergeMapTo, share } from 'rxjs/internal/operators';
 import { defer, Observable } from 'rxjs';
@@ -24,6 +23,8 @@ import IntentFilter = android.content.IntentFilter;
 import Intent = android.content.Intent;
 import BroadcastReceiver = android.content.BroadcastReceiver;
 import Context = android.content.Context;
+import { DeviceIdentifier } from 'app/bluetooth-scan/device-identifier';
+import { flatMap } from 'rxjs/operators';
 
 @AutoUnsubscribe()
 @Component({
@@ -36,7 +37,7 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
   private readonly btAdapter = BluetoothAdapter.getDefaultAdapter();
   private readonly receiver = new CustomReceiver();
   private readonly snackbar = new SnackBar();
-  public detectedDevices: MobileDevice[] = [];
+  public detectedDevices: DeviceIdentifier[] = [];
 
   public scanning = false;
 
@@ -71,17 +72,17 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
 
   public onItemSelected(event: ListViewEventData): void {
     const listView = event.object;
-    const selectedDevice = listView.getSelectedItems()[0] as MobileDevice;
+    const selectedDevice = listView.getSelectedItems()[0] as DeviceIdentifier;
 
-    if (!selectedDevice.name) {
+    if (!selectedDevice.username || !selectedDevice.pushToken) {
       this.snackbar.simple('This device is not logged in', '#000', '#d3d3d3');
       return;
     }
 
     this.router.navigate(['/time-select'], {
       queryParams: {
-        username: selectedDevice.name,
-        mac: selectedDevice.address,
+        username: selectedDevice.username,
+        pushToken: selectedDevice.pushToken,
       },
     });
   }
@@ -143,20 +144,45 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
   }
 
   private handleReceivers(): void {
-    this.receiver.deviceDetected.subscribe((address: string) => {
+    this.handleDeviceDetected();
+    this.handleDiscoveryStarted();
+    this.handleDiscoveryFinished();
+  }
+
+  private handleDeviceDetected(): void {
+    const deviceDetected = this.receiver.deviceDetected.pipe(share());
+
+    deviceDetected.subscribe((mac: string) => {
       this.zone.run(
-        () => (this.detectedDevices = [...this.detectedDevices, { address }])
+        () => (this.detectedDevices = [...this.detectedDevices, { mac }])
       );
-      this.assignDeviceName(address, this.detectedDevices.length - 1);
     });
+
+    deviceDetected
+      .pipe(flatMap((mac) => this.httpWrapper.findDevice(mac)))
+      .subscribe((device) => {
+        if (device) {
+          this.zone.run(
+            () =>
+              (this.detectedDevices[this.detectedDevices.length - 1] = device)
+          );
+        }
+      });
+  }
+
+  private handleDiscoveryStarted(): void {
     this.receiver.discoveryStarted.subscribe(() => {
       this.zone.run(() => (this.scanning = true));
     });
+  }
 
+  private handleDiscoveryFinished(): void {
     const discoveryFinished = this.receiver.discoveryFinished.pipe(share());
+
     discoveryFinished.subscribe(() => {
       this.zone.run(() => (this.scanning = false));
     });
+
     discoveryFinished
       .pipe(mergeMapTo(this.overwriteDevices()))
       .subscribe(() => {
@@ -168,24 +194,10 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
       });
   }
 
-  private assignDeviceName(address: string, index: number): void {
-    this.httpWrapper.findDevice(address).subscribe((device) => {
-      if (device) {
-        this.zone.run(() => {
-          this.detectedDevices[index].name = device.username;
-          this.detectedDevices = [...this.detectedDevices];
-        });
-      }
-    });
-  }
-
   private overwriteDevices(): Observable<void> {
     return defer(() =>
       this.httpWrapper.overwriteDetectedDevices({
-        detectedDevices: this.detectedDevices.map((device) => ({
-          mac: device.address,
-          username: device.name,
-        })),
+        detectedDevices: this.detectedDevices,
       })
     );
   }

@@ -22,12 +22,12 @@
         [backgroundColor]="i % 2 === 1 ? '#d3d3d3' : '#add8e6'"
       >
         <StackLayout>
-          <Label class="font-weight-bold h2" text="Name"></Label>
-          <Label class="h3" [text]="device.name || 'Unknown'"></Label>
+          <Label class="font-weight-bold h2" text="Username"></Label>
+          <Label class="h3" [text]="device.username || 'Unknown'"></Label>
         </StackLayout>
         <StackLayout>
-          <Label class="font-weight-bold h2" text="Address"></Label>
-          <Label class="h3" [text]="device.address"></Label>
+          <Label class="font-weight-bold h2" text="MAC"></Label>
+          <Label class="h3" [text]="device.mac"></Label>
         </StackLayout>
       </FlexboxLayout>
     </ng-template>
