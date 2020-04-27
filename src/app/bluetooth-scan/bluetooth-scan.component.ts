@@ -75,7 +75,7 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
     const selectedDevice = listView.getSelectedItems()[0] as DeviceIdentifier;
 
     if (!selectedDevice.username || !selectedDevice.pushToken) {
-      this.snackbar.simple('This device is not logged in', '#000', '#d3d3d3');
+      this.simpleSnackbar('This device is not logged in');
       return;
     }
 
@@ -95,7 +95,7 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
         this.discoverDevices();
       }
     } else {
-      this.snackbar.simple('Bluetooth not enabled', '#000', '#d3d3d3');
+      this.simpleSnackbar('Bluetooth not enabled');
     }
   }
 
@@ -105,14 +105,14 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
       await requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
       permissionGranted = true;
     } catch (e) {
-      this.snackbar.simple(
-        'ACCESS_FINE_LOCATION permission not granted',
-        '#000',
-        '#d3d3d3'
-      );
+      this.simpleSnackbar('ACCESS_FINE_LOCATION permission not granted');
       permissionGranted = false;
     }
     return (await this.bluetooth.enable()) && permissionGranted;
+  }
+
+  private simpleSnackbar(text: string): void {
+    this.snackbar.simple(text, '#000', '#d3d3d3');
   }
 
   private discoverDevices(): void {
@@ -186,11 +186,7 @@ export class BluetoothScanComponent implements OnInit, OnDestroy {
     discoveryFinished
       .pipe(mergeMapTo(this.overwriteDevices()))
       .subscribe(() => {
-        this.snackbar.simple(
-          'List of detected devices sent to the server',
-          '#000',
-          '#d3d3d3'
-        );
+        this.simpleSnackbar('List of detected devices sent to the server');
       });
   }
 
