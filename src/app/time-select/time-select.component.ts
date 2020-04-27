@@ -2,15 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { RouterExtensions } from 'nativescript-angular/router';
 import { Page } from 'tns-core-modules/ui/page/page';
 import { ActivatedRoute } from '@angular/router';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'ns-time-select',
   templateUrl: './time-select.component.html',
-  styleUrls: ['./time-select.component.css'],
+  styleUrls: ['./time-select.component.scss'],
 })
 export class TimeSelectComponent implements OnInit {
   public username: string;
   private mac: string;
+
+  public readonly timeControl = new FormControl(new Date());
 
   constructor(
     page: Page,
@@ -27,8 +30,5 @@ export class TimeSelectComponent implements OnInit {
   private retrieveUsernameAndMac(): void {
     this.username = this.route.snapshot.queryParams.username;
     this.mac = this.route.snapshot.queryParams.mac;
-
-    console.log(this.username);
-    console.log(this.mac);
   }
 }

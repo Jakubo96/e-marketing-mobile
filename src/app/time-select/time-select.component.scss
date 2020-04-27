@@ -1,0 +1,10 @@
+StackLayout {
+  vertical-align: center;
+  text-align: center;
+
+  .buttons {
+    background-color: red;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+}
